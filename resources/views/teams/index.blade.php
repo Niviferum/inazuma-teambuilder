@@ -40,7 +40,7 @@
 
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-sm">
-                                <strong>{{ $team->players->count() }}</strong> / 11 players
+                                <strong>{{ $team->players->count() }}</strong> / 16 players
                             </span>
 
                             @if($team->hasGoalkeeper())

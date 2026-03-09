@@ -23,14 +23,15 @@
                 @csrf
 
                 <!-- Sélecteur de formation -->
-                <div class="formation-selector-card"Choose Formation</h3>
+                <div class="formation-selector-card">
+                    <h3 class="formation-selector-title">⚽ Choose Formation</h3>
                     <select name="formation" 
                             id="formation-select"
                             class="formation-select"
                             onchange="updateFormation(this.value)">
                         @foreach(array_keys($formations) as $formationName)
                             <option value="{{ $formationName }}" 
-                                {{ ($team->players->first()?->pivot->formation ?? '4-3-3') == $formationName ? 'selected' : '' }}>
+                                {{ ($team->pitchPlayers->first()?->pivot->formation ?? '4-3-3') == $formationName ? 'selected' : '' }}>
                                 {{ $formationName }}
                             </option>
                         @endforeach
@@ -41,7 +42,7 @@
 
                     <!-- Terrain -->
                     <div class="lg:col-span-2 formation-pitch-card">
-                        <h3 class="formation-selector-title">Pitch</h3>
+                        <h3 class="formation-selector-title">🏟️ Pitch</h3>
 
                         <div class="formation-pitch">
                             <!-- Lignes du terrain -->
@@ -53,10 +54,10 @@
                             <div class="pitch-penalty-area-bottom"></div>
 
                             @php
-                                $currentFormation = $team->players->first()?->pivot->formation ?? '4-3-3';
+                                $currentFormation = $team->pitchPlayers->first()?->pivot->formation ?? '4-3-3';
                                 
                                 $assignedPlayers = [];
-                                foreach ($team->players as $player) {
+                                foreach ($team->pitchPlayers as $player) {
                                     if ($player->pivot->formation_position) {
                                         $assignedPlayers[$player->pivot->formation_position] = $player;
                                     }
@@ -106,43 +107,50 @@
                         </div>
                     </div>
 
-                    <!-- Panneau latéral : liste des joueurs -->
+                    <!-- Panneau latéral : Bench -->
                     <div class="formation-roster-card">
-                        <h3 class="formation-selector-title">Team Roster</h3>
+                        <h3 class="formation-selector-title">🪑 Bench ({{ $team->benchCount() }}/5)</h3>
                         <div class="formation-roster-list">
-                            @foreach($team->players as $player)
-                                @php
-                                    $positionClass = match($player->position) {
-                                        'GK' => 'badge-position-gk',
-                                        'DF' => 'badge-position-df',
-                                        'MF' => 'badge-position-mf',
-                                        'FW' => 'badge-position-fw',
-                                        default => 'badge-position-gk'
-                                    };
-                                @endphp
-                                
-                                <div class="roster-player-item player-item"
-                                    data-player-id="{{ $player->id }}"
-                                    data-player-name="{{ $player->nickname }}"
-                                    data-player-position="{{ $player->position }}"
-                                    data-player-image="{{ $player->image_url }}">
-                                    @if($player->image_url)
-                                        <img src="{{ $player->image_url }}" class="roster-player-image {{ $player->is_custom ? 'object-cover' : 'object-contain' }}">
-                                    @endif
-                                    <div class="roster-player-info">
-                                        <p class="roster-player-name">{{ $player->name }}</p>
-                                        <div class="roster-player-meta">
-                                            <span class="badge-position {{ $positionClass }}">{{ $player->position }}</span>
-                                            <span class="roster-player-ovr">OVR: {{ $player->total }}</span>
+                            @if($team->benchPlayers->isEmpty())
+                                <div class="text-center py-8 text-gray-500">
+                                    <p class="text-sm">No players on bench</p>
+                                    <p class="text-xs mt-2">Go to Team page to add players</p>
+                                </div>
+                            @else
+                                @foreach($team->benchPlayers as $player)
+                                    @php
+                                        $positionClass = match($player->position) {
+                                            'GK' => 'badge-position-gk',
+                                            'DF' => 'badge-position-df',
+                                            'MF' => 'badge-position-mf',
+                                            'FW' => 'badge-position-fw',
+                                            default => 'badge-position-gk'
+                                        };
+                                    @endphp
+                                    
+                                    <div class="roster-player-item player-item"
+                                        data-player-id="{{ $player->id }}"
+                                        data-player-name="{{ $player->nickname }}"
+                                        data-player-position="{{ $player->position }}"
+                                        data-player-image="{{ $player->image_url }}">
+                                        @if($player->image_url)
+                                            <img src="{{ $player->image_url }}" class="roster-player-image {{ $player->is_custom ? 'object-cover' : 'object-contain' }}">
+                                        @endif
+                                        <div class="roster-player-info">
+                                            <p class="roster-player-name">{{ $player->name }}</p>
+                                            <div class="roster-player-meta">
+                                                <span class="badge-position {{ $positionClass }}">{{ $player->position }}</span>
+                                                <span class="roster-player-ovr">OVR: {{ $player->total }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            @endif
                         </div>
 
                         <div class="mt-6">
                             <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                Save Formation
+                                💾 Save Formation
                             </button>
                         </div>
                     </div>

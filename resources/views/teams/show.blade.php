@@ -44,7 +44,7 @@
                         <div class="team-header-stats">
                             <div class="team-stat-item">
                                 <span class="team-stat-label">Players</span>
-                                <span class="team-stat-value">{{ $team->totalPlayers() }} / 11</span>
+                                <span class="team-stat-value">{{ $team->totalPlayers() }} / 16</span>
                             </div>
                             <div class="team-stat-item">
                                 <span class="team-stat-label">Status</span>
@@ -52,7 +52,7 @@
                                     @if($team->isFull())
                                         <span style="color: #22c55e;">FULL</span>
                                     @else
-                                        <span style="color: #f59e0b;">{{ 11 - $team->totalPlayers() }} slots</span>
+                                        <span style="color: #f59e0b;">{{ 16 - $team->totalPlayers() }} slots</span>
                                     @endif
                                 </span>
                             </div>

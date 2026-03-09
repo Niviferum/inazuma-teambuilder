@@ -22,7 +22,7 @@ class Team extends Model
             ->withTimestamps();
     }
 
-    // Vérifier si l'équipe est complète (11 joueurs max)
+    // Vérifier si l'équipe est complète (16 joueurs max)
     public function isFull(): bool
     {
         return $this->players()->sum('quantity') >= 16;
